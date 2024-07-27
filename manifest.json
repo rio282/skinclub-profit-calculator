@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "SKIN.CLUB Profit Calculator",
+  "version": "1.0",
+  "description": "Calculates the % chance to make profit on a certain case.",
+  "icons": {
+    "48": "icons/border-48.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.skin.club/*"
+      ],
+      "js": [
+        "content_script.js"
+      ]
+    }
+  ],
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": {
+      "48": "icons/icon.svg"
+    },
+    "default title": "SKIN.CLUB Profit Calculator",
+    "default_popup": "/popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ]
+}
