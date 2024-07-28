@@ -4,6 +4,8 @@ if (typeof SkinClubProfitCalculator === "undefined") {
     class SkinClubProfitCalculator {
         constructor() {
             this.profitMarginElementId = "__PM-EL-SCPC";
+            this.avgLossElementId = "__AL-EL-SCPC";
+
             this.caseTitleContainerQuery = ".case-title-wrapper";
             this.priceTagQuery = "span.price";
             this.dropsQuery = ".skins-list.items-list .case-skin";
@@ -14,7 +16,10 @@ if (typeof SkinClubProfitCalculator === "undefined") {
         }
 
         init() {
-            this.onElementAppear(this.priceTagQuery).then(() => this.runCalculateProfitChance());
+            this.onElementAppear(this.priceTagQuery).then(() => {
+                this.runCalculateProfitChance();
+                this.runCalculateAvgLoss();
+            });
         }
 
         onElementAppear(query) {
@@ -90,6 +95,61 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             caseTitleContainer.style.textAlign = "center";
             caseTitleContainer.style.gap = "14px";
             caseTitleContainer.appendChild(profitMarginElement);
+        }
+
+        calculateAvgLoss(casePrice) {
+            casePrice = parseFloat(casePrice.replace("$", ""));
+
+            const drops = document.querySelectorAll(this.dropsQuery);
+            const pricesAndChances = [];
+
+            drops.forEach(drop => {
+                const dropPriceElement = drop.querySelector(this.dropsPricesQuery);
+                const dropPrice = dropPriceElement.innerHTML.replace("$", "");
+
+                const dropOddsElement = drop.querySelector(this.dropsOddsQuery);
+                const dropChance = dropOddsElement.innerHTML.replace("%", "");
+
+                pricesAndChances.push({
+                    dropPrice: parseFloat(dropPrice),
+                    dropChance: parseFloat(dropChance)
+                });
+            });
+
+            let avgLoss = 0.0;
+            let totalLossChance = 0.0;
+            pricesAndChances.forEach(item => {
+                if (item.dropPrice < casePrice) {
+                    let loss = casePrice - item.dropPrice;
+                    avgLoss += loss * item.dropChance;
+                    totalLossChance += item.dropChance;
+                }
+            });
+
+            if (totalLossChance > 0) {
+                avgLoss /= totalLossChance;
+            }
+            return avgLoss;
+        }
+
+        runCalculateAvgLoss() {
+            const elementAlreadyExists = document.getElementById(this.avgLossElementId);
+            if (elementAlreadyExists) {
+                // do nothing.
+                return;
+            }
+            const price = document.querySelector(this.priceTagQuery).innerText;
+
+            const avgLossElement = document.createElement("span");
+            avgLossElement.id = this.avgLossElementId;
+            avgLossElement.style.textAlign = "center";
+            avgLossElement.style.textTransform = "uppercase";
+            avgLossElement.style.color = "#4f4b78";
+            avgLossElement.innerText = `$${this.calculateAvgLoss(price).toFixed(2)} loss on average`;
+
+            const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
+            caseTitleContainer.appendChild(document.createElement("br"));
+            caseTitleContainer.appendChild(avgLossElement);
         }
     }
 
