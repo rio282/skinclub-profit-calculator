@@ -6,10 +6,15 @@
   "icons": {
     "48": "icons/border-48.png"
   },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
   "content_scripts": [
     {
       "matches": [
-        "*://*.skin.club/*"
+        "*://skin.club/*/cases/open/*"
       ],
       "js": [
         "content_script.js"
@@ -21,12 +26,19 @@
     "default_icon": {
       "48": "icons/icon.svg"
     },
-    "default title": "SKIN.CLUB Profit Calculator",
+    "default_title": "SKIN.CLUB Profit Calculator",
     "default_popup": "/popup.html"
   },
   "permissions": [
     "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+    "webNavigation",
+    "<all_urls>",
+    "*://*/*"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "*://*/*"
   ]
 }

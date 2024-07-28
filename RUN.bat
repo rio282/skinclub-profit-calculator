@@ -1,4 +1,4 @@
 @echo off
 cls
-web-ext run
+web-ext run --devtools
 pause
