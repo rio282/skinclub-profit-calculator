@@ -1,3 +1,7 @@
+if (typeof chrome !== "undefined") {
+    browser = chrome;
+}
+
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     const loadComplete = changeInfo.status === "complete" && tab.url;
     if (!loadComplete) {
