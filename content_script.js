@@ -4,7 +4,7 @@ if (typeof SkinClubProfitCalculator === "undefined") {
     class SkinClubProfitCalculator {
         constructor() {
             this.profitMarginElementId = "__PM-EL-SCPC";
-            this.avgLossElementId = "__AL-EL-SCPC";
+            this.avgProfitRatioElementId = "__APR-EL-SCPC";
 
             this.caseTitleContainerQuery = ".case-title-wrapper";
             this.priceTagQuery = "span.price";
@@ -18,7 +18,7 @@ if (typeof SkinClubProfitCalculator === "undefined") {
         init() {
             this.onElementAppear(this.priceTagQuery).then(() => {
                 this.runCalculateProfitChance();
-                this.runCalculateAvgLoss();
+                this.runCalculateAvgProfitRatio();
             });
         }
 
@@ -89,12 +89,67 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             profitMarginElement.style.textAlign = "center";
             profitMarginElement.style.textTransform = "uppercase";
             profitMarginElement.style.color = "#4f4b78";
-            profitMarginElement.innerText = `${this.calculateProfitChance(price).toFixed(1)}% chance of making a profit`;
+            profitMarginElement.innerHTML = `<br><b>${this.calculateProfitChance(price).toFixed(1)}%</b> chance of making a profit`;
 
             const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
             caseTitleContainer.style.textAlign = "center";
             caseTitleContainer.style.gap = "14px";
             caseTitleContainer.appendChild(profitMarginElement);
+        }
+
+        calculateAvgProfit(casePrice) {
+            casePrice = parseFloat(casePrice.replace("$", ""));
+
+            const drops = document.querySelectorAll(this.dropsQuery);
+            const pricesAndChances = [];
+
+            drops.forEach(drop => {
+                const dropPriceElement = drop.querySelector(this.dropsPricesQuery);
+                const dropPrice = dropPriceElement.innerHTML.replace("$", "");
+
+                const dropOddsElement = drop.querySelector(this.dropsOddsQuery);
+                const dropChance = dropOddsElement.innerHTML.replace("%", "");
+
+                pricesAndChances.push({
+                    dropPrice: parseFloat(dropPrice),
+                    dropChance: parseFloat(dropChance)
+                });
+            });
+
+            let avgProfit = 0.0;
+            let totalProfitChance = 0.0;
+            pricesAndChances.forEach(item => {
+                if (item.dropPrice > casePrice) {
+                    let profit = item.dropPrice - casePrice;
+                    avgProfit += profit * item.dropChance;
+                    totalProfitChance += item.dropChance;
+                }
+            });
+
+            if (totalProfitChance > 0) {
+                avgProfit /= totalProfitChance;
+            }
+            return avgProfit;
+        }
+
+        runCalculateAvgProfitRatio() {
+            const elementAlreadyExists = document.getElementById(this.avgProfitRatioElementId);
+            if (elementAlreadyExists) {
+                // do nothing.
+                return;
+            }
+            const price = document.querySelector(this.priceTagQuery).innerText;
+
+            const avgProfitElement = document.createElement("span");
+            avgProfitElement.id = this.avgProfitRatioElementId;
+            avgProfitElement.style.textAlign = "center";
+            avgProfitElement.style.textTransform = "uppercase";
+            avgProfitElement.style.color = "#4f4b78";
+            avgProfitElement.innerHTML = `averages @ <b>$${this.calculateAvgProfit(price).toFixed(2)} profit / $${this.calculateAvgLoss(price).toFixed(2)} loss</b>`;
+
+            const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
+            caseTitleContainer.appendChild(document.createElement("br"));
+            caseTitleContainer.appendChild(avgProfitElement);
         }
 
         calculateAvgLoss(casePrice) {
@@ -130,26 +185,6 @@ if (typeof SkinClubProfitCalculator === "undefined") {
                 avgLoss /= totalLossChance;
             }
             return avgLoss;
-        }
-
-        runCalculateAvgLoss() {
-            const elementAlreadyExists = document.getElementById(this.avgLossElementId);
-            if (elementAlreadyExists) {
-                // do nothing.
-                return;
-            }
-            const price = document.querySelector(this.priceTagQuery).innerText;
-
-            const avgLossElement = document.createElement("span");
-            avgLossElement.id = this.avgLossElementId;
-            avgLossElement.style.textAlign = "center";
-            avgLossElement.style.textTransform = "uppercase";
-            avgLossElement.style.color = "#4f4b78";
-            avgLossElement.innerText = `$${this.calculateAvgLoss(price).toFixed(2)} loss on average`;
-
-            const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
-            caseTitleContainer.appendChild(document.createElement("br"));
-            caseTitleContainer.appendChild(avgLossElement);
         }
     }
 
