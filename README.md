@@ -4,12 +4,12 @@
 
 - [Introduction](#introduction)
 - [Features](#features)
-- [Installation](#installation)
+- [Installation (Firefox)](#installation-firefox)
 - [License](#license)
 
 ## Introduction
 
-Welcome to the SKIN.CLUB Profit Calculator, a Firefox extension designed to enhance your experience on SKIN.CLUB by
+Welcome to the SKIN.CLUB Profit Calculator, a (originally Firefox) web-extension designed to enhance your experience on SKIN.CLUB by
 providing a comprehensive toolset for calculating profits on cases and more. Whether you're a seasoned trader or a
 newcomer, our extension aims to give you the insights you need to make informed decisions and maximize your returns.
 
@@ -20,7 +20,7 @@ newcomer, our extension aims to give you the insights you need to make informed 
     - **Average Losses**: Assess average losses to better understand potential risks.
 - **User-Friendly Interface**: Easy-to-navigate UI for easy use.
 
-## Installation
+## Installation (Firefox)
 
 To load the SKIN.CLUB Profit Calculator as a temporary addon in Firefox, follow these steps:
 
