@@ -10,7 +10,7 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             this.priceTagQuery = "span.price";
             this.dropsQuery = ".skins-list.items-list .case-skin";
             this.dropsPricesQuery = ".table-cell.price-and-quality span.price";
-            this.dropsOddsQuery = ".pf-table-row-link .table-cell.odds"; // FIX: can't find this on sticker cases
+            this.dropsOddsQuery = ".pf-table-row:not(.head) .table-cell.odds";
 
             this.init();
         }
