@@ -52,6 +52,14 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             });
         }
 
+        addToCaseTitleContainer(childElement) {
+            const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
+            caseTitleContainer.style.textAlign = "center";
+            caseTitleContainer.style.gap = "14px";
+            caseTitleContainer.appendChild(childElement);
+            caseTitleContainer.appendChild(document.createElement("br"));
+        }
+
         displayProfitAverages() {
             const elementAlreadyExists = document.getElementById(this.profitMarginElementId);
             if (elementAlreadyExists) {
@@ -64,12 +72,9 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             profitMarginElement.style.textAlign = "center";
             profitMarginElement.style.textTransform = "uppercase";
             profitMarginElement.style.color = "#4f4b78";
-            profitMarginElement.innerHTML = `<br><b>${this.#data.profitChance.toFixed(1)}%</b> chance of making a profit`;
+            profitMarginElement.innerHTML = `<b>${this.#data.profitChance.toFixed(1)}%</b> chance of making a profit`;
 
-            const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
-            caseTitleContainer.style.textAlign = "center";
-            caseTitleContainer.style.gap = "14px";
-            caseTitleContainer.appendChild(profitMarginElement);
+            this.addToCaseTitleContainer(profitMarginElement);
         }
 
         displayAverageProfitRatio() {
@@ -85,9 +90,7 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             avgProfitElement.style.color = "#4f4b78";
             avgProfitElement.innerHTML = `averages @ <b>$${this.#data.averageProfit.toFixed(2)} profit / $${this.#data.averageLoss.toFixed(2)} loss</b>`;
 
-            const caseTitleContainer = document.querySelector(this.caseTitleContainerQuery);
-            caseTitleContainer.appendChild(document.createElement("br"));
-            caseTitleContainer.appendChild(avgProfitElement);
+            this.addToCaseTitleContainer(avgProfitElement);
         }
 
         calculateCaseData(casePrice) {
