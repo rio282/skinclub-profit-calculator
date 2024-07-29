@@ -8,8 +8,17 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         return;
     }
 
-    const urlPattern = new RegExp("^https?://skin\\.club/.*/cases/open/.*");
-    if (urlPattern.test(tab.url)) {
-        browser.tabs.executeScript(tabId, {file: "content_script.js"});
+    const casePattern = new RegExp("^https?://skin\\.club/.*/cases/open/.*");
+    if (casePattern.test(tab.url)) {
+        browser.tabs.executeScript(tabId, {file: "cscript_cases.js"});
+        return;
     }
+
+    const battlePattern = new RegExp("^https?://skin\\.club/.*/battles/.*");
+    if (battlePattern.test(tab.url)) {
+        browser.tabs.executeScript(tabId, {file: "./scripts/cscript_case_battle.js"})
+        return;
+    }
+
+    // resuming...
 });
