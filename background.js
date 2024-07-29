@@ -10,7 +10,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     const casePattern = new RegExp("^https?://skin\\.club/.*/cases/open/.*");
     if (casePattern.test(tab.url)) {
-        browser.tabs.executeScript(tabId, {file: "cscript_cases.js"});
+        browser.tabs.executeScript(tabId, {file: "./scripts/cscript_cases.js"});
         return;
     }
 
