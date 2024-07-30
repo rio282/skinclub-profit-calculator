@@ -17,7 +17,7 @@
         "*://skin.club/*/cases/open/*"
       ],
       "js": [
-        "./cscripts/cscript_cases.js"
+        "cscript_cases.js"
       ]
     },
     {
@@ -25,7 +25,7 @@
         "*://skin.club/*/battles/*"
       ],
       "js": [
-        "./cscripts/cscript_case_battle.js"
+        "cscript_case_battle.js"
       ]
     }
   ],
