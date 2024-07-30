@@ -5,7 +5,9 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
         constructor() {
             this.moneyCounterClass = "CLASS__MC-EL-SCPC";
 
+
             this.battleProgressQuery = ".battle-progress";
+            this.battleCrazyModeModifierQuery = ".mode-label__icon.crazy-mode";
             this.battleSlotQuery = ".battle-slot";
             this.battleInventoryQuery = "aside.battle-slot__aside .battle-slot-inventory";
             this.battleDropQuery = ".battle-inventory-drop";
@@ -86,6 +88,11 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
             });
 
             playerScores.sort((a, b) => b.value - a.value);
+            const crazyModeModifierActive = document.querySelector(this.battleProgressQuery)?.querySelector(this.battleCrazyModeModifierQuery) !== null;
+            if (crazyModeModifierActive) {
+                playerScores.reverse();
+            }
+
             const leader = playerScores[0];
             const lossLeader = playerScores[playerScores.length - 1];
 
