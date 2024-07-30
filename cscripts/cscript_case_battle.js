@@ -87,19 +87,23 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
 
             playerScores.sort((a, b) => b.value - a.value);
             const leader = playerScores[0];
+            const lossLeader = playerScores[playerScores.length - 1];
 
             // user feedback
             players.forEach(player => {
                 const playerInfoContainer = player.querySelector(this.playerInfoContainerQuery)
                 const playerInfo = playerInfoContainer.querySelector(this.playerInfoQuery)
+                const usernameContainer = playerInfoContainer.querySelector(this.playerUsernameContainerQuery);
                 const name = playerInfo.textContent;
                 const inventoryValue = playerScores.find(player => player.name === name).value;
 
                 // highlight player
                 if (name === leader.name) {
-                    playerInfo.querySelector(this.playerUsernameContainerQuery).style.color = "yellow";
+                    usernameContainer.style.color = "yellow";
+                } else if (name === lossLeader.name) {
+                    usernameContainer.style.color = "red";
                 } else {
-                    playerInfo.querySelector(this.playerUsernameContainerQuery).style = "";
+                    usernameContainer.style = "";
                 }
 
                 // money counter
