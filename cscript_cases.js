@@ -12,7 +12,7 @@ if (typeof SkinClubProfitCalculator === "undefined") {
             this.caseTitleContainerQuery = ".case-title-wrapper";
             this.priceTagQuery = "span.price";
             this.dropsQuery = ".skins-list.items-list .case-skin";
-            this.dropsPricesQuery = ".table-cell.price-and-quality span.price";
+            this.dropsPricesQuery = ".table-cell.price-and-quality span.price span";
             this.dropsOddsQuery = ".pf-table-row:not(.head) .table-cell.odds";
 
             this.init();
@@ -106,6 +106,7 @@ if (typeof SkinClubProfitCalculator === "undefined") {
                 const dropOddsElement = drop.querySelector(this.dropsOddsQuery);
                 const dropChance = dropOddsElement.innerHTML.replace("%", "");
 
+                console.log(dropPrice, dropChance)
                 pricesAndChances.push({
                     dropPrice: parseFloat(dropPrice),
                     dropChance: parseFloat(dropChance)
