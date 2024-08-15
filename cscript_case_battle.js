@@ -19,6 +19,8 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
             this.playerInfoQuery = ".player-info__main";
             this.playerUsernameContainerQuery = ".player-info__username";
 
+            this.teamsModeVerifierQuery = ".battle-teams__versus-icon.versus-icon";
+
             this.init();
         }
 
@@ -61,12 +63,56 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
             });
         }
 
+        updateSinglesHighlighting(playerSectionElements, leader, lossLeader) {
+            playerSectionElements.forEach(player => {
+                const playerInfoContainer = player.querySelector(this.playerInfoContainerQuery);
+                const playerInfo = playerInfoContainer.querySelector(this.playerInfoQuery);
+                const usernameContainer = playerInfoContainer.querySelector(this.playerUsernameContainerQuery);
+                const name = playerInfo.textContent;
+
+                if (name === leader.name) {
+                    usernameContainer.style.color = "yellow";
+                } else if (name === lossLeader.name) {
+                    usernameContainer.style.color = "red";
+                } else {
+                    usernameContainer.style = "";
+                }
+            });
+        }
+
+        updateTeamHighlighting(playerSectionElements, playerScores, leftTeamWorth, rightTeamWorth, crazyModeModifierActive) {
+            let winningTeam = leftTeamWorth > rightTeamWorth ? "left" : "right";
+            let losingTeam = leftTeamWorth < rightTeamWorth ? "left" : "right";
+            if (crazyModeModifierActive) {
+                [winningTeam, losingTeam] = [losingTeam, winningTeam];
+            }
+
+            playerSectionElements.forEach(player => {
+                const playerInfoContainer = player.querySelector(this.playerInfoContainerQuery);
+                const playerInfo = playerInfoContainer.querySelector(this.playerInfoQuery);
+                const usernameContainer = playerInfoContainer.querySelector(this.playerUsernameContainerQuery);
+                const name = playerInfo.textContent;
+                const team = playerScores.find(p => p.name === name).team;
+
+                if (leftTeamWorth === rightTeamWorth) {
+                    usernameContainer.style = "cyan";
+                } else if (team === winningTeam) {
+                    usernameContainer.style.color = "yellow";
+                } else if (team === losingTeam) {
+                    usernameContainer.style.color = "red";
+                } else {
+                    usernameContainer.style = "";
+                }
+            });
+        }
+
         updateMoneyCounters() {
             // calculate player scores
             let playerScores = [];
 
             const players = document.querySelectorAll(this.battleSlotQuery);
-            players.forEach(player => {
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
                 let worth = 0.0;
 
                 const inventory = player.querySelectorAll(this.battleDropQuery);
@@ -83,9 +129,10 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
                 const name = player.querySelector(this.playerInfoQuery).textContent;
                 playerScores.push({
                     name: name,
-                    value: worth
+                    value: worth,
+                    team: (i < players.length >> 1) ? "left" : "right"
                 });
-            });
+            }
 
             playerScores.sort((a, b) => b.value - a.value);
             const crazyModeModifierActive = document.querySelector(this.battleProgressQuery)?.querySelector(this.battleCrazyModeModifierQuery) !== null;
@@ -93,25 +140,23 @@ if (typeof SkinClubCaseBattleCalculator === "undefined") {
                 playerScores.reverse();
             }
 
-            const leader = playerScores[0];
-            const lossLeader = playerScores[playerScores.length - 1];
+            // check for teams mode
+            const isTeamsMode = document.querySelector(this.teamsModeVerifierQuery) !== null;
+            if (isTeamsMode) {
+                const leftTeamWorth = playerScores.filter(p => p.team === "left").reduce((acc, p) => acc + p.value, 0);
+                const rightTeamWorth = playerScores.filter(p => p.team === "right").reduce((acc, p) => acc + p.value, 0);
+                this.updateTeamHighlighting(players, playerScores, leftTeamWorth, rightTeamWorth, crazyModeModifierActive);
+            } else {
+                const leader = playerScores[0];
+                const lossLeader = playerScores[playerScores.length - 1];
+                this.updateSinglesHighlighting(players, leader, lossLeader);
+            }
 
-            // user feedback
             players.forEach(player => {
-                const playerInfoContainer = player.querySelector(this.playerInfoContainerQuery)
-                const playerInfo = playerInfoContainer.querySelector(this.playerInfoQuery)
-                const usernameContainer = playerInfoContainer.querySelector(this.playerUsernameContainerQuery);
+                const playerInfoContainer = player.querySelector(this.playerInfoContainerQuery);
+                const playerInfo = playerInfoContainer.querySelector(this.playerInfoQuery);
                 const name = playerInfo.textContent;
                 const inventoryValue = playerScores.find(player => player.name === name).value;
-
-                // highlight player
-                if (name === leader.name) {
-                    usernameContainer.style.color = "yellow";
-                } else if (name === lossLeader.name) {
-                    usernameContainer.style.color = "red";
-                } else {
-                    usernameContainer.style = "";
-                }
 
                 // money counter
                 let moneyCounter = playerInfoContainer.querySelector(`.${this.moneyCounterClass}`);
